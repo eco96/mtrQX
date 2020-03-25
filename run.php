@@ -52,7 +52,7 @@ class curl {
         }
         curl_close($this->ch);
         return $this->result;
-    }  
+    }   
 }
 
 class motorku {
@@ -285,26 +285,40 @@ class motorku {
         $header   =  [
             'authorization: Bearer '.$token
         ];
-        $endpoint = '/api/deal/category/'.$categoryId;
 
-        $voucher = $curl->request ($method, $endpoint, $param=NULL, $header);
-   
-        $json = json_decode($voucher);
+        echo "\nDaftar Voucher Yang Akan Di Redeem Otomatis:\n";
+        $no=1;
+        $for = 1;
+        for ($i=1; $i <= $for; $i++) { 
+            back:
+            $endpoint = '/api/deal/category/'.$categoryId.'?page='.$i;
 
-        if($json->status == 1) {
-            echo "\nDaftar Voucher Yang Akan Di Redeem Otomatis:\n";
-            
-            $total_pages = $json->meta->pagination->total_pages;
-            $no=1;
-            foreach ($json->data as $data) {     
-                echo "[".$no++."] ".$data->id." | ".$data->name."\n";
-            }      
-            echo "\n";
-            return $json->data;
+            $voucher = $curl->request ($method, $endpoint, $param=NULL, $header);
+    
+            $json = json_decode($voucher);
 
-        } else {
-            return FALSE;
+            if($json->status == 1) {
+                            
+                $total_pages = $json->meta->pagination->total_pages;
+                if($for==1) {
+                    $for = $total_pages;
+                }
+                              
+                foreach ($json->data as $data) { 
+                    $vocList[] = [
+                        'id'    => $data->id,
+                        'name'  => $data->name,
+                        'point' => $data->point
+                    ];
+                    echo "[".$no++."] ".$data->id." | ".$data->name."\n";
+                }                   
+
+            } else {
+                echo "[!] GAGAL Mendapatkan Daftar Voucher!\n";
+                goto back;
+            }           
         }
+        return json_decode(json_encode($vocList)); 
     }
 
     /**
@@ -337,7 +351,7 @@ class motorku {
 
 $motorku = new motorku();
 
-echo "V2.4\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
+echo "V2.5\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
 echo "Kode Referral :";
 $reff = trim(fgets(STDIN));
 poin:
@@ -349,7 +363,7 @@ if(!is_numeric($poin)) {
     echo "[i] Masukkan jumlah poin yang diinginkan\n";
     goto poin;
 }
-echo "\n\n";
+echo "\n";
 
 echo "Auto Redeem [Y/N] :";
 $auto_redeem = trim(fgets(STDIN));
@@ -385,7 +399,6 @@ if (strtolower($auto_redeem)=='y') {
             $owner_token = $loginProgress;
         }
     }
-
 }
 
 if($validToken == TRUE) {
@@ -429,11 +442,11 @@ if($validToken == TRUE) {
     }
 
     if($owner_point >= 5000) {
-        echo "[i] POINT LO SUDAH BANYAK, JANGAN MARUK! LANJUT LANGSUNG REDEEM AJA.\n";
+        echo "\n[i] POINT LO SUDAH BANYAK, JANGAN MARUK! LANJUT LANGSUNG REDEEM AJA.\n";
 
         while(true) {
             foreach ($voucher as $dataVoucher) {
-                $item_id    = $dataVoucher->id;
+                $item_id    = $dataVoucher->id; 
                 $item_name  = $dataVoucher->name;
                 $item_point = $dataVoucher->point;
     
@@ -452,8 +465,7 @@ if($validToken == TRUE) {
                     die();
                 }           
             }
-        }
-        
+        }     
     }
 }
 
@@ -516,7 +528,7 @@ while(TRUE) {
         }   
         
         if($owner_point >= 5000) {
-            echo "[i] POINT LO SUDAH BANYAK, JANGAN MARUK! LANJUT LANGSUNG REDEEM AJA.\n";
+            echo "\n[i] POINT LO SUDAH BANYAK, JANGAN MARUK! LANJUT LANGSUNG REDEEM AJA.\n";
     
             while(true) {
                 foreach ($voucher as $dataVoucher) {
@@ -539,10 +551,8 @@ while(TRUE) {
                         die();
                     }           
                 }
-            }
-            
+            }       
         }    
     }   
 }
-
 ?>
