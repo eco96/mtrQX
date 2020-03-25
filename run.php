@@ -52,8 +52,7 @@ class curl {
         }
         curl_close($this->ch);
         return $this->result;
-    }
-    
+    }  
 }
 
 class motorku {
@@ -338,7 +337,7 @@ class motorku {
 
 $motorku = new motorku();
 
-echo "V2.3\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
+echo "V2.4\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
 echo "Kode Referral :";
 $reff = trim(fgets(STDIN));
 poin:
@@ -468,7 +467,6 @@ while(TRUE) {
         $firstname = $value->Firstname;
         $lastname  = $value->Lastname;
         $email     = $value->Email;
-
 
         for ($i=0; $i < 2; $i++) { 
             if($i==0) {
