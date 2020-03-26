@@ -18,7 +18,7 @@ class curl {
      	 * @param array $header API request header
 	 */
 	public function request ($method, $url, $param, $header) {
-	curl:
+		curl:
         $this->ch = curl_init();
         switch ($method){
             case "GET":
@@ -42,7 +42,7 @@ class curl {
         $this->error = curl_error($this->ch);
         if(!$this->result){
             if($this->error) {
-                echo "[!] ".date('H:i:s')." | cURL Error: Gagal terhubung ke Server MotorQX! ...wait...\r\r";
+                echo "[!] ".date('H:i:s')." | cURL Error: Gagal terhubung ke Server MotorQX!\n";
                 sleep(1);
                 goto curl;
             } else {
@@ -90,7 +90,7 @@ class motorku {
             if($json->status->code == 200) {
                 return $json->result;
             } else {
-                echo "[!] ".date('H:i:s')." | GAGAL Menggenerate Nama!\r\r";
+                echo "[!] ".date('H:i:s')." | GAGAL Menggenerate Nama!\n";
                 sleep(2);
                 goto randomuser;
             }        
