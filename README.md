@@ -1,6 +1,6 @@
 
 
-## mtrQX V2.5
+## mtrQX V2.6
 Untuk Desktop langsung double-click file run-cmd.bat -> enter 1
 
 Termux (Android) && Linux Ubuntu:
@@ -15,4 +15,4 @@ Update GIT Clone Repo Termux (Android) && Linux Ubuntu:
 **Disclaimer:** Segala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!
 
 ## Capture
-![Capture](https://raw.githubusercontent.com/eco96/mtrQX/master/Capture.JPG)
+![Capture](https://raw.githubusercontent.com/eco96/mtrQX/master/mtrQX%20V2.6.jpg)
