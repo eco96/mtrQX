@@ -15,10 +15,10 @@ class curl {
 	 * @param string $method HTTP request method
 	 * @param string $url API request URL
 	 * @param array $param API request data
-    	 * @param array $header API request header
+     	 * @param array $header API request header
 	 */
 	public function request ($method, $url, $param, $header) {
-		curl:
+	curl:
         $this->ch = curl_init();
         switch ($method){
             case "GET":
@@ -35,14 +35,14 @@ class curl {
         curl_setopt($this->ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 20);
         curl_setopt($this->ch, CURLOPT_TIMEOUT, 120);
 
         $this->result = curl_exec($this->ch);
         $this->error = curl_error($this->ch);
         if(!$this->result){
             if($this->error) {
-                echo "[!] cURL Error: Gagal Menghubungkan Ke Server!\n";
+                echo "[!] ".date('H:i:s')." | cURL Error: Gagal terhubung ke Server MotorQX! ...wait...\r\r";
                 sleep(1);
                 goto curl;
             } else {
@@ -90,7 +90,7 @@ class motorku {
             if($json->status->code == 200) {
                 return $json->result;
             } else {
-                echo "[!] ".date('H:i:s')." | GAGAL Menggenerate Nama!\n";
+                echo "[!] ".date('H:i:s')." | GAGAL Menggenerate Nama!\r\r";
                 sleep(2);
                 goto randomuser;
             }        
