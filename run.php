@@ -325,14 +325,19 @@ class motorku {
             $for = 1;
             for ($i=1; $i <= $for; $i++) { 
                 back:
-                $endpoint = '/api/deal/category/'.$catId.'?page='.$i;
+                $endpoint = '/api/deal/category/'.$catId.'?page='.$i; 
 
                 $voucher = $curl->request ($method, $endpoint, $param=NULL, $header);
         
                 $json = json_decode($voucher);
 
                 if($json->status == 1) {
-                                
+
+                    if($json->data == []) {
+                        echo "[!] Kategori Voucher yang dipilih tidak tersedia!\n";
+                        return FALSE;
+                    }
+  
                     $total_pages = $json->meta->pagination->total_pages;
                     if($for==1) {
                         $for = $total_pages;
@@ -420,11 +425,6 @@ class motorku {
    
         $json = json_decode($redeem);
 
-        if($json->status == 1) {
-            $fh = fopen("log.txt", "a");
-            fwrite($fh, "Redeem respone :".$redeem."\n\n");
-            fclose($fh);
-        }
         return $json;
     }
 
@@ -455,7 +455,7 @@ class motorku {
 
 $motorku = new motorku();
 
-echo "\nV2.8.1\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
+echo "\nV2.8.2\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
 echo "Kode Referral :";
 $reff = trim(fgets(STDIN));
 poin:
@@ -517,7 +517,8 @@ if($validToken === true) {
     $owner_point = $get_info->data->point;
 
     echo "[i] Anda sedang login sebagai ".$owner_nama." [".$owner_phone."], Total Poin: ".$owner_point."\n\n";
- 
+    
+    category:
     echo "Pilih Kategori Voucher Yang Ingin Di Redeem!\n";    
     echo "1. Makanan\n";
     echo "2. Belanja\n";
@@ -535,15 +536,27 @@ if($validToken === true) {
     switch($categori) {
         case "1":          
             $voc_selected = 1;
-            $voucher = $motorku->voucher([2], $owner_token);  
+            $voucher = $motorku->voucher([2], $owner_token); 
+            if($voucher === FALSE) {
+                echo "\n";
+                goto category;
+            } 
         break;
         case "2":
             $voc_selected = 2;
             $voucher = $motorku->voucher([4], $owner_token);
+            if($voucher === FALSE) {
+                echo "\n";
+                goto category;
+            }
         break;
         case "3":
             $voc_selected = 3;
             $voucher = $motorku->voucher([2,4], $owner_token);
+            if($voucher === FALSE) {
+                echo "\n";
+                goto category;
+            }
         break;
         case "4":           
             $voc_selected = 4;
@@ -625,12 +638,24 @@ if($validToken === true) {
             switch($categori) {
                 case "1":
                     $voucher = $motorku->voucher([2], $owner_token);  
+                    if($voucher === FALSE) {
+                        echo "\n";
+                        goto category;
+                    }
                 break;
                 case "2":
                     $voucher = $motorku->voucher([4], $owner_token);
+                    if($voucher === FALSE) {
+                        echo "\n";
+                        goto category;
+                    }
                 break;
                 case "3":
                     $voucher = $motorku->voucher([2,4], $owner_token);
+                    if($voucher === FALSE) {
+                        echo "\n";
+                        goto category;
+                    }
                 break;
             }
         }     
@@ -702,12 +727,24 @@ while(TRUE) {
                     switch($categori) {
                         case "1":
                             $voucher = $motorku->voucher([2], $owner_token);  
+                            if($voucher === FALSE) {
+                                echo "\n";
+                                goto category;
+                            }
                         break;
                         case "2":
                             $voucher = $motorku->voucher([4], $owner_token);
+                            if($voucher === FALSE) {
+                                echo "\n";
+                                goto category;
+                            }
                         break;
                         case "3":
                             $voucher = $motorku->voucher([2,4], $owner_token);
+                            if($voucher === FALSE) {
+                                echo "\n";
+                                goto category;
+                            }
                         break;
                     }
 
@@ -770,12 +807,24 @@ while(TRUE) {
                     switch($categori) {
                         case "1":
                             $voucher = $motorku->voucher([2], $owner_token);  
+                            if($voucher === FALSE) {
+                                echo "\n";
+                                goto category;
+                            }
                         break;
                         case "2":
                             $voucher = $motorku->voucher([4], $owner_token);
+                            if($voucher === FALSE) {
+                                echo "\n";
+                                goto category;
+                            }
                         break;
                         case "3":
                             $voucher = $motorku->voucher([2,4], $owner_token);
+                            if($voucher === FALSE) {
+                                echo "\n";
+                                goto category;
+                            }
                         break;
                     }
                 }       
