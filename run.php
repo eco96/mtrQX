@@ -451,7 +451,7 @@ class motorku {
 
 $motorku = new motorku();
 
-echo "\nV2.8\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
+echo "\nV2.8.0\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
 echo "Kode Referral :";
 $reff = trim(fgets(STDIN));
 poin:
@@ -527,27 +527,23 @@ if($validToken === true) {
     } elseif($categori > 4) {
         goto pilih;
     }
-    echo "\n";
     
     switch($categori) {
-        case "1":
-            echo "\nDaftar Voucher Yang Tersedia Saat ini:\n";
+        case "1":          
             $voc_selected = 1;
             $voucher = $motorku->voucher([2], $owner_token);  
         break;
         case "2":
-            echo "\nDaftar Voucher Yang Tersedia Saat ini:\n";
             $voc_selected = 2;
             $voucher = $motorku->voucher([4], $owner_token);
         break;
         case "3":
-            echo "\nDaftar Voucher Yang Tersedia Saat ini:\n";
             $voc_selected = 3;
             $voucher = $motorku->voucher([2,4], $owner_token);
         break;
-        case "4":
-            echo "\nDaftar Voucher Yang Kamu Pilih:\n";
+        case "4":           
             $voc_selected = 4;
+            echo "\n";
             echo "[i] Voucher ID yang pernah ada (401,404,405,408,409,410,411)\n";
             echo "[i] Gunakan tanda koma (,) untuk input lebih dari satu.\n";
             voucherID:
@@ -566,6 +562,11 @@ if($validToken === true) {
         break;
     }
 
+    if($voc_selected == 4) {
+        echo "\nDaftar Voucher Yang Kamu Pilih:\n";
+    } else {
+        echo "\nDaftar Voucher Yang Tersedia Saat ini:\n";
+    }
     $voc_no = 1;
     foreach ($voucher as $dataVoc) {
         $voc_id    = $dataVoc->id; 
