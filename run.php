@@ -15,7 +15,7 @@ class curl {
 	 * @param string $method HTTP request method
 	 * @param string $url API request URL
 	 * @param array $param API request data
-   	 * @param array $header API request header
+    	 * @param array $header API request header
 	 */
 	public function request ($method, $url, $param, $header) {
 		curl:
@@ -548,7 +548,7 @@ if($validToken === true) {
             $voc_selected = 1;
             $voucher = $motorku->voucher([2], $owner_token); 
             if($voucher === FALSE) {
-                echo "[!] Kategori Voucher yang dipilih tidak tersedia!\n";
+                echo "[!] Kategori Voucher yang dipilih tidak tersedia!\n\n";
                 goto category;
             } 
         break;
@@ -556,7 +556,7 @@ if($validToken === true) {
             $voc_selected = 2;
             $voucher = $motorku->voucher([4], $owner_token);
             if($voucher === FALSE) {
-                echo "[!] Kategori Voucher yang dipilih tidak tersedia!\n";
+                echo "[!] Kategori Voucher yang dipilih tidak tersedia!\n\n";
                 goto category;
             }
         break;
@@ -564,7 +564,7 @@ if($validToken === true) {
             $voc_selected = 3;
             $voucher = $motorku->voucher([2,4], $owner_token);
             if($voucher === FALSE) {
-                echo "[!] Kategori Voucher yang dipilih tidak tersedia!\n";
+                echo "[!] Kategori Voucher yang dipilih tidak tersedia!\n\n";
                 goto category;
             }
         break;
