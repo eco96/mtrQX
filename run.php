@@ -190,40 +190,70 @@ class motorku {
      */
     function loginProgress() {
         login:
-        echo "Masukkan No. HP :";
-        $phone = trim(fgets(STDIN));
-        $login = $this->login($phone);
-        if($login===true) {
+        echo "\n[i] Kelebihan login dengan token adalah session Bot dan Aplikasi bisa berjalan bersamaan\n";
+        echo "1. Login dengan Nomor HP\n";
+        echo "2. Login dengan Token di Aplikasi\n";
+        pilih:
+        echo "Pilih :";
+        $opsi = trim(fgets(STDIN));
 
-            verify:
-            echo "Masukkan OTP    :";
-            $otp = trim(fgets(STDIN));
-            $verify = $this->verify_login($phone, $otp);
-            if($verify===false) {
-                echo "[!] Kode OTP SALAH!\n";
-                goto verify;
-            } else {
-                $owner_token = $verify;
-                unlink("token.txt");
-                $fh = fopen("token.txt", "a");
-                fwrite($fh, $owner_token);
-                fclose($fh);
-                return $owner_token;
-            }
+        switch ($opsi) {
+            case '1':
+                echo "Masukkan No. HP :";
+                $phone = trim(fgets(STDIN));
+                $login = $this->login($phone);
+                if($login===true) {
 
-        } else {
-            echo "[!] Login GAGAL! Enter R (Coba lagi!), Z (Lanjut tanpa Auto Redeem).\n";
-            echo "Choice :";
-            $choice = trim(fgets(STDIN));
-            if(strtolower($choice) == 'r') {
-                echo "\n";
-                goto login;
-            } elseif(strtolower($choice) != 'z') {
-                echo "\n";
-                die();
-            }
-            return FALSE;
+                    verify:
+                    echo "Masukkan OTP    :";
+                    $otp = trim(fgets(STDIN));
+                    $verify = $this->verify_login($phone, $otp);
+                    if($verify===false) {
+                        echo "[!] Kode OTP SALAH!\n";
+                        goto verify;
+                    } else {
+                        $owner_token = $verify;
+                        unlink("token.txt");
+                        $fh = fopen("token.txt", "a");
+                        fwrite($fh, $owner_token);
+                        fclose($fh);
+                        return $owner_token;
+                    }
+
+                } else {
+                    echo "[!] Login GAGAL! Enter R (Coba lagi!), Z (Lanjut tanpa Auto Redeem).\n";
+                    echo "Choice :";
+                    $choice = trim(fgets(STDIN));
+                    if(strtolower($choice) == 'r') {
+                        echo "\n";
+                        goto login;
+                    } elseif(strtolower($choice) != 'z') {
+                        echo "\n";
+                        die();
+                    }
+                    return FALSE;
+                }
+                break;
+
+            case '2':
+                token:
+                echo "Masukkan Token  :";
+                $token = trim(fgets(STDIN));
+                $check = $this->profile($token);
+                if($check === FALSE) {
+                    echo "[!] Session Token Kamu Telah Habis!\n";
+                    goto login;
+                } else {
+                    return $token;
+                }
+                break;
+            
+            default:
+                goto pilih;
+                break;
         }
+
+        
     }
 
     /**
@@ -276,7 +306,8 @@ class motorku {
     }
     
     /**
-     * Redeem Points
+     * Category voucher
+     * Automatic
      */
     function voucher($categoryId=[], $token) {
         $curl = new curl();
@@ -319,6 +350,51 @@ class motorku {
         }
         
         return json_decode(json_encode($vocList)); 
+    }
+
+    /**
+     * Detail voucher
+     * Manual input
+     */
+    function voucherID($voucherID, $token) {
+        $curl = new curl();
+
+        $method   = 'GET';
+        $header   =  [
+            'authorization: Bearer '.$token
+        ];
+        
+        $for=1;
+        foreach ($voucherID as $vocId) {
+            $for = 1;
+            back:
+            $endpoint = '/api/deal/detail/'.$vocId;
+
+            $voucher = $curl->request ($method, $endpoint, $param=NULL, $header);
+    
+            $json = json_decode($voucher);
+
+            if($json->status == 1) {
+                                                       
+            $vocList[] = [
+                'id'    => $json->data->id,
+                'name'  => $json->data->name,
+                'point' => $json->data->point
+            ]; 
+            $for++;                     
+                 
+            } elseif($json->status == 0) {
+                echo "[!] Voucher ID ".$vocId." tidak ditemukan!\n";
+            } else {
+                echo "[!] GAGAL Mendapatkan Detail Voucher ID ".$vocId."!\n";
+                goto back;
+            }           
+    }
+        if($for==1) {
+            return FALSE;
+        } else {
+            return json_decode(json_encode($vocList));
+        }        
     }
 
     /**
@@ -375,7 +451,7 @@ class motorku {
 
 $motorku = new motorku();
 
-echo "\nV2.7.2\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
+echo "\nV2.8\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
 echo "Kode Referral :";
 $reff = trim(fgets(STDIN));
 poin:
@@ -437,33 +513,56 @@ if($validToken === true) {
     $owner_point = $get_info->data->point;
 
     echo "[i] Anda sedang login sebagai ".$owner_nama." [".$owner_phone."], Total Poin: ".$owner_point."\n\n";
-
-    echo "Pilih Kategori Voucher Yang Ingin Di Redeem!\n";
+ 
+    echo "Pilih Kategori Voucher Yang Ingin Di Redeem!\n";    
     echo "1. Makanan\n";
     echo "2. Belanja\n";
-    echo "3. Semua\n";
+    echo "3. Semua diatas\n";
+    echo "4. Input Manual VoucherID\n";
     pilih:
     echo "Pilih :";
     $categori = trim(fgets(STDIN));
     if (!is_numeric($categori)) {
         goto pilih;
-    } elseif($categori > 3) {
+    } elseif($categori > 4) {
         goto pilih;
     }
-
-    echo "\nDaftar Voucher Yang Akan Di Redeem Otomatis:\n";
+    echo "\n";
+    
     switch($categori) {
         case "1":
+            echo "\nDaftar Voucher Yang Tersedia Saat ini:\n";
             $voc_selected = 1;
             $voucher = $motorku->voucher([2], $owner_token);  
         break;
         case "2":
+            echo "\nDaftar Voucher Yang Tersedia Saat ini:\n";
             $voc_selected = 2;
             $voucher = $motorku->voucher([4], $owner_token);
         break;
         case "3":
+            echo "\nDaftar Voucher Yang Tersedia Saat ini:\n";
             $voc_selected = 3;
             $voucher = $motorku->voucher([2,4], $owner_token);
+        break;
+        case "4":
+            echo "\nDaftar Voucher Yang Kamu Pilih:\n";
+            $voc_selected = 4;
+            echo "[i] Voucher ID yang pernah ada (401,404,405,408,409,410,411)\n";
+            echo "[i] Gunakan tanda koma (,) untuk input lebih dari satu.\n";
+            voucherID:
+            echo "Masukkan VoucherID :";
+            $vocID = trim(fgets(STDIN));
+            if (empty($vocID)) {
+                goto voucherID;
+            } else {
+                $voucherID = explode(",",str_replace(" ","",$vocID));
+                $voucher = $motorku->voucherID($voucherID, $owner_token);
+                if($voucher === FALSE) {
+                    goto voucherID;
+                }
+            }
+            
         break;
     }
 
