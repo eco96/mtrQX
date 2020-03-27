@@ -321,6 +321,7 @@ class motorku {
             'authorization: Bearer '.$token
         ];
 
+        $vocCat = 1;
         foreach ($categoryId as $catId) {
             $for = 1;
             for ($i=1; $i <= $for; $i++) { 
@@ -334,16 +335,17 @@ class motorku {
                 if($json->status == 1) {
 
                     if($json->data == []) {
-                        echo "[!] Kategori Voucher yang dipilih tidak tersedia!\n";
-                        return FALSE;
+                        echo "[!] Voucher CategoryID ".$catId." tidak tersedia!\n";
+                        $vocCat = $vocCat +1;
                     }
-  
+
                     $total_pages = $json->meta->pagination->total_pages;
                     if($for==1) {
                         $for = $total_pages;
                     }
                                 
-                    foreach ($json->data as $data) { 
+                    foreach ($json->data as $data) {
+
                         $vocList[] = [
                             'id'    => $data->id,
                             'name'  => $data->name,
@@ -358,6 +360,15 @@ class motorku {
             }
         }
         
+        if(count($categoryId) == 1) {
+            if($vocCat >1) {
+                return FALSE;
+            }
+        } elseif(count($categoryId) == 2) {
+            if($vocCat >2) {
+                return FALSE;
+            }
+        }
         return json_decode(json_encode($vocList)); 
     }
 
@@ -455,7 +466,7 @@ class motorku {
 
 $motorku = new motorku();
 
-echo "\nV2.8.2\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
+echo "\nV2.8.3\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
 echo "Kode Referral :";
 $reff = trim(fgets(STDIN));
 poin:
