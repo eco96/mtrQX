@@ -124,11 +124,7 @@ class motorku {
 
         $json = json_decode($regis);
 
-        if($json->status == 1) {
-            return $json->token; 
-        } else {          
-            return FALSE;
-        }
+        return $json;
         
         
     }
@@ -417,6 +413,7 @@ class motorku {
      * Redeem Points
      */
     function redeem($token, $item_id) {
+        sleep(1);
         $curl = new curl();
 
         $method   = 'POST';
@@ -687,10 +684,8 @@ while(TRUE) {
             }
 
             $run = $motorku->regis($name, $reff);
-            if($run===FALSE) {
-                echo "[!] ".date('H:i:s')." | GAGAL Registrasi. ".$json->msg."\n";
-            } else {
-                $get_points = $motorku->get_points($run);
+            if($run->status == 1) {
+                $get_points = $motorku->get_points($run->token);
                 if($get_points === FALSE) {
                     echo "[!] ".date('H:i:s')." | GAGAL mendapatkan Referal Poin.\n";
                 } else {
@@ -770,6 +765,8 @@ while(TRUE) {
                         die();
                     }  
                 }           
+            } else {
+                echo "[!] ".date('H:i:s')." | GAGAL Registrasi. ".$run->msg."\n";
             }
         }   
         
