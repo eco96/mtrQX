@@ -152,11 +152,7 @@ class motorku {
    
         $json = json_decode($login);
 
-        if($json->status == 1) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
+        return $json;
     }
 
     /**
@@ -202,7 +198,7 @@ class motorku {
                 echo "Masukkan No. HP :";
                 $phone = trim(fgets(STDIN));
                 $login = $this->login($phone);
-                if($login===true) {
+                if($login->status == 1) {
 
                     verify:
                     echo "Masukkan OTP    :";
@@ -221,7 +217,8 @@ class motorku {
                     }
 
                 } else {
-                    echo "[!] Login GAGAL! Enter R (Coba lagi!), Z (Lanjut tanpa Auto Redeem).\n";
+                    echo "[!] Login GAGAL! ".$login->msg."\n";
+                    echo "[?] Enter R (Coba lagi!), Z (Lanjut tanpa Auto Redeem).\n";
                     echo "Choice :";
                     $choice = trim(fgets(STDIN));
                     if(strtolower($choice) == 'r') {
@@ -526,7 +523,7 @@ if($validToken === true) {
     $owner_phone = $get_info->data->phone_number;
     $owner_point = $get_info->data->point;
 
-    echo "[i] Anda sedang login sebagai ".$owner_nama." [".$owner_phone."], Total Poin: ".$owner_point."\n\n";
+    echo "\n[i] Anda sedang login sebagai ".$owner_nama." [".$owner_phone."], Total Poin: ".$owner_point."\n\n";
     
     category:
     echo "Pilih Kategori Voucher Yang Ingin Di Redeem!\n";    
