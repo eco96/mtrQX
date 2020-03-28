@@ -125,12 +125,12 @@ class motorku {
         $json = json_decode($regis);
 
         if($json->status == 1) {
-            $token = $json->token;
-        } else {
-            $token = NULL;
+            return $json->token; 
+        } else {          
+            return FALSE;
         }
         
-        return $this->get_points($token);
+        
     }
 
     /**
@@ -462,7 +462,7 @@ class motorku {
 
 $motorku = new motorku();
 
-echo "\nV2.8.4\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
+echo "\nV2.8.5\nby @eco.nxn\n\nDisclaimer:\nSegala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!\n\n";
 echo "Kode Referral :";
 $reff = trim(fgets(STDIN));
 poin:
@@ -687,84 +687,89 @@ while(TRUE) {
             }
 
             $run = $motorku->regis($name, $reff);
-            if($run===true) {
-                echo "[".$no++."] ".date('H:i:s')." | Registrasi Berhasil.";
+            if($run===FALSE) {
+                echo "[!] ".date('H:i:s')." | GAGAL Registrasi. ".$json->msg."\n";
+            } else {
+                $get_points = $motorku->get_points($run);
+                if($get_points === FALSE) {
+                    echo "[!] ".date('H:i:s')." | GAGAL mendapatkan Referal Poin.\n";
+                } else {
+                    echo "[".$no++."] ".date('H:i:s')." | Registrasi Berhasil.";
 
-                if($validToken === true) {
-                    $profile = $motorku->profile($owner_token);              
-                    $owner_point = $profile->data->point;                  
+                    if($validToken === true) {
+                        $profile = $motorku->profile($owner_token);              
+                        $owner_point = $profile->data->point;                  
 
-                    echo " Total Poin Sekarang ".$owner_point.".\n";
-              
-                    foreach ($voucher as $dataVoucher) {
-                        $item_id    = $dataVoucher->id;
-                        $item_name  = $dataVoucher->name;
-                        $item_point = $dataVoucher->point;
+                        echo " Total Poin Sekarang ".$owner_point.".\n";
+                
+                        foreach ($voucher as $dataVoucher) {
+                            $item_id    = $dataVoucher->id;
+                            $item_name  = $dataVoucher->name;
+                            $item_point = $dataVoucher->point;
 
-                        $get_info_point = $motorku->profile($owner_token);
-                        $owner_point = $get_info_point->data->point;
+                            $get_info_point = $motorku->profile($owner_token);
+                            $owner_point = $get_info_point->data->point;
 
-                        if($owner_point >= $item_point) {
-                            $redeem = $motorku->redeem($owner_token, $item_id);
-                            if($redeem->status == 1) { 
-                                echo "[i] ".date('H:i:s')." | Yeeeaaay!!!".$item_name." berhasil di Redeem\n";
-                                // Voucher Saya
-                                $inventory = $motorku->inventory($owner_token);
-                                if($inventory->status == 1) {
-                                    echo "\n[i] Voucher Saya :\n";
-                                    foreach ($inventory->data as $inventoryData) {
-                                        echo "[-] ".$inventoryData->deal->data->name."\n";
-                                        echo "[-] Kode :".$inventoryData->voucher->code."\n\n";
+                            if($owner_point >= $item_point) {
+                                $redeem = $motorku->redeem($owner_token, $item_id);
+                                if($redeem->status == 1) { 
+                                    echo "[i] ".date('H:i:s')." | Yeeeaaay!!!".$item_name." berhasil di Redeem\n";
+                                    // Voucher Saya
+                                    $inventory = $motorku->inventory($owner_token);
+                                    if($inventory->status == 1) {
+                                        echo "\n[i] Voucher Saya :\n";
+                                        foreach ($inventory->data as $inventoryData) {
+                                            echo "[-] ".$inventoryData->deal->data->name."\n";
+                                            echo "[-] Kode :".$inventoryData->voucher->code."\n\n";
 
-                                        unlink("voucher.txt");
-                                        $fh = fopen("voucher.txt", "a");
-                                        fwrite($fh, $inventoryData->deal->data->name." | Kode :".$inventoryData->voucher->code."\n");
-                                        fclose($fh);
+                                            unlink("voucher.txt");
+                                            $fh = fopen("voucher.txt", "a");
+                                            fwrite($fh, $inventoryData->deal->data->name." | Kode :".$inventoryData->voucher->code."\n");
+                                            fclose($fh);
+                                        }
+                                    
+                                    } else {
+                                        "[!] ".date('H:i:s')." | Voucher :".$inventory->msg."\n\n";
                                     }
-                                
                                 } else {
-                                    "[!] ".date('H:i:s')." | Voucher :".$inventory->msg."\n\n";
+                                    echo "[!] ".date('H:i:s')." | GAGAL Redeem ".$item_name." | ".$redeem->msg."\n";
                                 }
-                            } else {
-                                echo "[!] ".date('H:i:s')." | GAGAL Redeem ".$item_name." | ".$redeem->msg."\n";
-                            }
-                        }                                  
-                    } 
-                    
-                    switch($categori) {
-                        case "1":
-                            $voucher = $motorku->voucher([2], $owner_token);  
-                            if($voucher === FALSE) {
-                                echo "\n";
-                                goto category;
-                            }
-                        break;
-                        case "2":
-                            $voucher = $motorku->voucher([4], $owner_token);
-                            if($voucher === FALSE) {
-                                echo "\n";
-                                goto category;
-                            }
-                        break;
-                        case "3":
-                            $voucher = $motorku->voucher([2,4], $owner_token);
-                            if($voucher === FALSE) {
-                                echo "\n";
-                                goto category;
-                            }
-                        break;
+                            }                                  
+                        } 
+                        
+                        switch($categori) {
+                            case "1":
+                                $voucher = $motorku->voucher([2], $owner_token);  
+                                if($voucher === FALSE) {
+                                    echo "\n";
+                                    goto category;
+                                }
+                            break;
+                            case "2":
+                                $voucher = $motorku->voucher([4], $owner_token);
+                                if($voucher === FALSE) {
+                                    echo "\n";
+                                    goto category;
+                                }
+                            break;
+                            case "3":
+                                $voucher = $motorku->voucher([2,4], $owner_token);
+                                if($voucher === FALSE) {
+                                    echo "\n";
+                                    goto category;
+                                }
+                            break;
+                        }
+
+                    } else {
+                        echo "\n";
                     }
 
-                } else {
-                    echo "\n";
-                }
-
-                if($no > $loop) {
-                    echo "\n\nDONE! Target Poin Tercapai.\n\n";
-                    die();
-                }             
-            } else {
-                echo "[!] ".date('H:i:s')." | Registrasi GAGAL\n";
+                    if($no > $loop) {
+                        echo "\n\nDONE! Target Poin Tercapai.\n\n";
+                        die();
+                    }  
+                }           
             }
         }   
         
