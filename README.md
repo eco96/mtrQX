@@ -15,4 +15,4 @@ Update GIT Clone Repo Termux (Android) && Linux Ubuntu:
 **Disclaimer:** Segala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!
 
 ## Capture
-![Capture](https://raw.githubusercontent.com/eco96/mtrQX/master/mtrQX%20V2.6.jpg)
+![Capture](https://i.ibb.co/RvCq9Jh/Untitled-1.png)
