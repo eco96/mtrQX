@@ -10,7 +10,7 @@ Termux (Android) && Linux Ubuntu:
 
 Update GIT Clone Repo Termux (Android) && Linux Ubuntu:
 * `cd mtrQX`
-* `git pull origin master`
+* `git pull`
 
 **Disclaimer:** Segala bentuk resiko atas tindakan ini saya pribadi tidak bertanggung jawab, gunakanlah senormal-nya!
 
